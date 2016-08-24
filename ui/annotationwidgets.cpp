@@ -540,7 +540,7 @@ QWidget * HighlightAnnotationWidget::createStyleWidget()
     QWidget * widget = new QWidget();
     QGridLayout * lay = new QGridLayout( widget );
     lay->setMargin( 0 );
-    QLabel * tmplabel = new QLabel( i18n( "Type:" ), widget );  
+    QLabel * tmplabel = new QLabel( i18n( "Type:" ), widget );
     lay->addWidget( tmplabel, 0, 0, Qt::AlignRight );
     m_typeCombo = new KComboBox( widget );
     tmplabel->setBuddy( m_typeCombo );
