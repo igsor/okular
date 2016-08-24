@@ -18,6 +18,7 @@
 #include <qvariant.h>
 #include <kcolorbutton.h>
 #include <kcombobox.h>
+#include <QLineEdit>
 #include <kfontrequester.h>
 #include <kicon.h>
 #include <kiconloader.h>
@@ -537,15 +538,17 @@ HighlightAnnotationWidget::HighlightAnnotationWidget( Okular::Annotation * ann )
 QWidget * HighlightAnnotationWidget::createStyleWidget()
 {
     QWidget * widget = new QWidget();
-    QVBoxLayout * lay = new QVBoxLayout( widget );
+    QGridLayout * lay = new QGridLayout( widget );
     lay->setMargin( 0 );
-    QHBoxLayout * typelay = new QHBoxLayout();
-    lay->addLayout( typelay );
-    QLabel * tmplabel = new QLabel( i18n( "Type:" ), widget );
-    typelay->addWidget( tmplabel, 0, Qt::AlignRight );
+    QLabel * tmplabel = new QLabel( i18n( "Type:" ), widget );  
+    lay->addWidget( tmplabel, 0, 0, Qt::AlignRight );
     m_typeCombo = new KComboBox( widget );
     tmplabel->setBuddy( m_typeCombo );
-    typelay->addWidget( m_typeCombo );
+    lay->addWidget( m_typeCombo, 0, 1 );
+    m_useKey = new QCheckBox( i18n( "Key:" ), widget );
+    lay->addWidget( m_useKey, 1, 0 );
+    m_keyEdit = new QLineEdit( widget );
+    lay->addWidget( m_keyEdit, 1, 1 );
 
     m_typeCombo->addItem( i18n( "Highlight" ) );
     m_typeCombo->addItem( i18n( "Squiggle" ) );
@@ -553,18 +556,26 @@ QWidget * HighlightAnnotationWidget::createStyleWidget()
     m_typeCombo->addItem( i18n( "Strike out" ) );
     m_typeCombo->setCurrentIndex( m_hlAnn->highlightType() );
 
+    if ( m_hlAnn->useKey() )
+        m_useKey->setCheckState(Qt::Checked);
+    m_keyEdit->setEnabled( m_useKey->isChecked() );
+    m_keyEdit->setText( m_hlAnn->keyText() );
+
     connect( m_typeCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(dataChanged()) );
+    connect( m_useKey, SIGNAL(toggled(bool)), this, SIGNAL(dataChanged()) );
+    connect( m_keyEdit, SIGNAL(textChanged(QString)), this, SIGNAL(dataChanged()) );
+    connect( m_useKey, SIGNAL(toggled(bool)), m_keyEdit, SLOT(setEnabled(bool)) );
 
     return widget;
+
 }
 
 void HighlightAnnotationWidget::applyChanges()
 {
     AnnotationWidget::applyChanges();
     m_hlAnn->setHighlightType( (Okular::HighlightAnnotation::HighlightType)m_typeCombo->currentIndex() );
+    m_hlAnn->setKey( m_useKey->isChecked(), m_keyEdit->text());
 }
-
-
 
 GeomAnnotationWidget::GeomAnnotationWidget( Okular::Annotation * ann )
     : AnnotationWidget( ann )

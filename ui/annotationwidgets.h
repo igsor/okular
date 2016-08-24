@@ -16,6 +16,7 @@
 
 class QCheckBox;
 class QComboBox;
+class QLineEdit;
 class QDoubleSpinBox;
 class QLabel;
 class QWidget;
@@ -176,6 +177,8 @@ protected:
 private:
     Okular::HighlightAnnotation * m_hlAnn;
     QComboBox * m_typeCombo;
+    QLineEdit * m_keyEdit;
+    QCheckBox * m_useKey;
 };
 
 class GeomAnnotationWidget
