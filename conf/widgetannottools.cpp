@@ -433,6 +433,7 @@ QDomDocument EditAnnotToolDialog::toolXml() const
         engineElement.setAttribute( "type", "TextSelector" );
         engineElement.setAttribute( "color", color );
         annotationElement.setAttribute( "color", color );
+        annotationElement.setAttribute( "key", "hello world" );
     }
     else if ( toolType == ToolGeometricalShape )
     {
