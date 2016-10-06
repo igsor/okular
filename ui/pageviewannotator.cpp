@@ -626,6 +626,7 @@ class TextSelectorEngine : public AnnotatorEngine
                 text = item()->page()->text(selection, Okular::TextPage::CentralPixelTextAreaInclusionBehaviour);
                 text.remove(QString("-\n"));
                 text.replace(QChar('\n'), QChar(' '));
+                text = text.trimmed();
 
                 if ( ! keyString.isEmpty() )
                 {
