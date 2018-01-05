@@ -3318,6 +3318,35 @@ void Document::removePageAnnotations( int page, const QList<Annotation*> &annota
     d->m_undoStack->endMacro();
 }
 
+const QMap<QString, QString> Document::getAnnotation(const QVector<QString> options) const
+{
+    QMap<QString, QString> excerpts;
+    for ( QVector<Page*>::const_iterator page = d->m_pagesVector.begin();
+          page < d->m_pagesVector.end();
+          ++page)
+    {
+        //page->annotations()
+        if ( (*page)->hasAnnotations() )
+        {
+            QLinkedList<Annotation*> annotations = (*page)->annotations();
+            for(QLinkedList<Annotation*>::const_iterator annot = annotations.begin();
+                annot != annotations.end();
+                ++annot)
+            {
+                QDomDocument doc;
+                doc.setContent((*annot)->contents());
+                QDomElement elem = doc.documentElement();
+                QString key = elem.nodeName();
+                QString value = elem.firstChild().nodeValue();
+
+                if ( options.contains(key) && !excerpts.contains(key) )
+                    excerpts.insert(key, value);
+            }
+        }
+    }
+    return excerpts;
+}
+
 bool DocumentPrivate::canAddAnnotationsNatively() const
 {
     Okular::SaveInterface * iface = qobject_cast< Okular::SaveInterface * >( m_generator );
