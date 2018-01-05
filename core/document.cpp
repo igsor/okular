@@ -3188,7 +3188,7 @@ void DocumentPrivate::notifyAnnotationChanges( int page )
 {
     int flags = DocumentObserver::Annotations;
 
-    if ( m_annotationsNeedSaveAs )
+    //if ( m_annotationsNeedSaveAs )
         flags |= DocumentObserver::NeedSaveAs;
 
     foreachObserverD( notifyPageChanged( page, flags ) );
