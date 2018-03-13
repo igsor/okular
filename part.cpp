@@ -2246,6 +2246,7 @@ const KUrl Part::saveNameSuggestion() const
 
     // Get content from annotations
     QMap<QString, QString> annotations = m_document->getAnnotation(options);
+    // FIXME: "Lastname Firstname" for author fields
 
     // Construct file name suggestion
     if ( annotations.contains("author") && annotations.contains("title") )

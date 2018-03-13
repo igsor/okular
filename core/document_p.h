@@ -134,7 +134,7 @@ class DocumentPrivate
         Document::OpenResult openDocumentInternal( const KService::Ptr& offer, bool isstdin, const QString& docFile, const QByteArray& filedata, const QString& password );
         bool savePageDocumentInfo( KTemporaryFile *infoFile, int what ) const;
         DocumentViewport nextDocumentViewport() const;
-        void notifyAnnotationChanges( int page );
+        void notifyAnnotationChanges( int page, bool needSave = true );
         bool canAddAnnotationsNatively() const;
         bool canModifyExternalAnnotations() const;
         bool canRemoveExternalAnnotations() const;
@@ -142,7 +142,7 @@ class DocumentPrivate
         OKULAR_EXPORT static QString docDataFileName(const KUrl &url, qint64 document_size);
 
         // Methods that implement functionality needed by undo commands
-        void performAddPageAnnotation( int page, Annotation *annotation );
+        void performAddPageAnnotation( int page, Annotation *annotation, bool isInitial = false );
         void performRemovePageAnnotation( int page, Annotation * annotation );
         void performModifyPageAnnotation( int page, Annotation * annotation, bool appearanceChanged );
         void performSetAnnotationContents( const QString & newContents, Annotation *annot, int pageNumber );

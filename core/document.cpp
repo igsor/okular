@@ -1064,7 +1064,7 @@ void DocumentPrivate::warnLimitedAnnotSupport()
     }
 }
 
-void DocumentPrivate::performAddPageAnnotation( int page, Annotation * annotation )
+void DocumentPrivate::performAddPageAnnotation( int page, Annotation * annotation, bool isInitial )
 {
     Okular::SaveInterface * iface = qobject_cast< Okular::SaveInterface * >( m_generator );
     AnnotationProxy *proxy = iface ? iface->annotationProxy() : 0;
@@ -1086,7 +1086,7 @@ void DocumentPrivate::performAddPageAnnotation( int page, Annotation * annotatio
         proxy->notifyAddition( annotation, page );
 
     // notify observers about the change
-    notifyAnnotationChanges( page );
+    notifyAnnotationChanges( page, !isInitial );
 
     if ( annotation->flags() & Annotation::ExternallyDrawn )
     {
@@ -3184,11 +3184,11 @@ void Document::requestTextPage( uint page )
     d->m_generator->generateTextPage( kp );
 }
 
-void DocumentPrivate::notifyAnnotationChanges( int page )
+void DocumentPrivate::notifyAnnotationChanges( int page, bool needSave )
 {
     int flags = DocumentObserver::Annotations;
 
-    //if ( m_annotationsNeedSaveAs )
+    if ( needSave | m_annotationsNeedSaveAs )
         flags |= DocumentObserver::NeedSaveAs;
 
     foreachObserverD( notifyPageChanged( page, flags ) );
