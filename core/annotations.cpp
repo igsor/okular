@@ -1863,7 +1863,7 @@ class Okular::HighlightAnnotationPrivate : public Okular::AnnotationPrivate
 {
     public:
         HighlightAnnotationPrivate()
-            : AnnotationPrivate(), m_highlightType( HighlightAnnotation::Highlight )
+            : AnnotationPrivate(), m_highlightType( HighlightAnnotation::Highlight ) , m_useKey( false )
         {
         }
 
@@ -1875,6 +1875,8 @@ class Okular::HighlightAnnotationPrivate : public Okular::AnnotationPrivate
 
         HighlightAnnotation::HighlightType m_highlightType;
         QList< HighlightAnnotation::Quad > m_highlightQuads;
+        bool m_useKey;
+        QString m_keyText;
 };
 
 HighlightAnnotation::HighlightAnnotation()
@@ -1895,6 +1897,25 @@ void HighlightAnnotation::setHighlightType( HighlightType type )
 {
     Q_D( HighlightAnnotation );
     d->m_highlightType = type;
+}
+
+void HighlightAnnotation::setKey( bool useKey, QString text )
+{
+    Q_D( HighlightAnnotation );
+    d->m_useKey = useKey;
+    d->m_keyText = text;
+}
+
+bool HighlightAnnotation::useKey() const
+{
+    Q_D( const HighlightAnnotation );
+    return d->m_useKey;
+}
+
+QString HighlightAnnotation::keyText() const
+{
+    Q_D( const HighlightAnnotation );
+    return d->m_keyText;
 }
 
 HighlightAnnotation::HighlightType HighlightAnnotation::highlightType() const

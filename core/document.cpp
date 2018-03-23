@@ -1064,7 +1064,7 @@ void DocumentPrivate::warnLimitedAnnotSupport()
     }
 }
 
-void DocumentPrivate::performAddPageAnnotation( int page, Annotation * annotation )
+void DocumentPrivate::performAddPageAnnotation( int page, Annotation * annotation, bool isInitial )
 {
     Okular::SaveInterface * iface = qobject_cast< Okular::SaveInterface * >( m_generator );
     AnnotationProxy *proxy = iface ? iface->annotationProxy() : 0;
@@ -1086,7 +1086,7 @@ void DocumentPrivate::performAddPageAnnotation( int page, Annotation * annotatio
         proxy->notifyAddition( annotation, page );
 
     // notify observers about the change
-    notifyAnnotationChanges( page );
+    notifyAnnotationChanges( page, !isInitial );
 
     if ( annotation->flags() & Annotation::ExternallyDrawn )
     {
@@ -3184,11 +3184,11 @@ void Document::requestTextPage( uint page )
     d->m_generator->generateTextPage( kp );
 }
 
-void DocumentPrivate::notifyAnnotationChanges( int page )
+void DocumentPrivate::notifyAnnotationChanges( int page, bool needSave )
 {
     int flags = DocumentObserver::Annotations;
 
-    if ( m_annotationsNeedSaveAs )
+    if ( needSave | m_annotationsNeedSaveAs )
         flags |= DocumentObserver::NeedSaveAs;
 
     foreachObserverD( notifyPageChanged( page, flags ) );
@@ -3316,6 +3316,35 @@ void Document::removePageAnnotations( int page, const QList<Annotation*> &annota
         d->m_undoStack->push(uc);
     }
     d->m_undoStack->endMacro();
+}
+
+const QMap<QString, QString> Document::getAnnotation(const QVector<QString> options) const
+{
+    QMap<QString, QString> excerpts;
+    for ( QVector<Page*>::const_iterator page = d->m_pagesVector.begin();
+          page < d->m_pagesVector.end();
+          ++page)
+    {
+        //page->annotations()
+        if ( (*page)->hasAnnotations() )
+        {
+            QLinkedList<Annotation*> annotations = (*page)->annotations();
+            for(QLinkedList<Annotation*>::const_iterator annot = annotations.begin();
+                annot != annotations.end();
+                ++annot)
+            {
+                QDomDocument doc;
+                doc.setContent((*annot)->contents());
+                QDomElement elem = doc.documentElement();
+                QString key = elem.nodeName();
+                QString value = elem.firstChild().nodeValue();
+
+                if ( options.contains(key) && !excerpts.contains(key) )
+                    excerpts.insert(key, value);
+            }
+        }
+    }
+    return excerpts;
 }
 
 bool DocumentPrivate::canAddAnnotationsNatively() const

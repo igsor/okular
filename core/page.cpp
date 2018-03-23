@@ -819,7 +819,7 @@ void PagePrivate::restoreLocalContents( const QDomNode & pageNode )
                 // append annotation to the list or show warning
                 if ( annotation )
                 {
-                    m_doc->performAddPageAnnotation(m_number, annotation);
+                    m_doc->performAddPageAnnotation(m_number, annotation, true );
                     kDebug(OkularDebug) << "restored annot:" << annotation->uniqueName();
                 }
                 else

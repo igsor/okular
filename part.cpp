@@ -2226,13 +2226,37 @@ void Part::slotSaveFileAs()
         }
     }
 
-    KUrl saveUrl = KFileDialog::getSaveUrl( url(),
+    KUrl saveUrl = KFileDialog::getSaveUrl( saveNameSuggestion(),
                                             QString(), widget(), QString(),
                                             KFileDialog::ConfirmOverwrite );
     if ( !saveUrl.isValid() || saveUrl.isEmpty() )
         return;
 
     saveAs( saveUrl );
+}
+
+const KUrl Part::saveNameSuggestion() const
+{
+    // FIXME: Make configurable
+    // Set up options
+    QVector<QString> options;
+    options.append("author");
+    options.append("title");
+    options.append("year");
+
+    // Get content from annotations
+    QMap<QString, QString> annotations = m_document->getAnnotation(options);
+    // FIXME: "Lastname Firstname" for author fields
+
+    // Construct file name suggestion
+    if ( annotations.contains("author") && annotations.contains("title") )
+        return KUrl( annotations["author"] + " - " + annotations["title"] + ".pdf" );
+    else if ( annotations.contains("author") )
+        return KUrl( annotations["author"] + ".pdf" );
+    else if ( annotations.contains("title") )
+        return KUrl( annotations["title"] + ".pdf" );
+    else
+        return url();
 }
 
 bool Part::saveAs( const KUrl & saveUrl )

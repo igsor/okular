@@ -430,9 +430,15 @@ QDomDocument EditAnnotToolDialog::toolXml() const
                 break;
         }
 
+        if ( ha->useKey() )
+        {
+            annotationElement.setAttribute( "key", ha->keyText() );
+        }
+
         engineElement.setAttribute( "type", "TextSelector" );
         engineElement.setAttribute( "color", color );
         annotationElement.setAttribute( "color", color );
+
     }
     else if ( toolType == ToolGeometricalShape )
     {
@@ -676,6 +682,7 @@ void EditAnnotToolDialog::loadTool( const QDomElement &toolElement )
         ha->setHighlightType( Okular::HighlightAnnotation::Underline );
     }
 
+
     // Common properties
     if ( annotationElement.hasAttribute( "color" ) )
         m_stubann->style().setColor( QColor( annotationElement.attribute( "color" ) ) );
@@ -686,6 +693,19 @@ void EditAnnotToolDialog::loadTool( const QDomElement &toolElement )
 
     if ( toolElement.hasAttribute( "name" ) )
         m_name->setText( toolElement.attribute( "name" ) );
+
+    if ( annotType == "underline" || annotType == "strikeout" || annotType == "squiggly" || annotType == "highlight" )
+    {
+        Okular::HighlightAnnotation * ha = static_cast<Okular::HighlightAnnotation*>( m_stubann );
+        if ( annotationElement.hasAttribute( "key" ) )
+        {
+            ha->setKey( true, QString( annotationElement.attribute( "key" ) ) );
+        }
+        else
+        {
+            ha->setKey( false, "" );
+        }
+    }
 }
 
 void EditAnnotToolDialog::slotTypeChanged()
