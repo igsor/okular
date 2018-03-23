@@ -53,7 +53,7 @@ RUN mkdir /root/okular/build && \
     cmake ..
 
 # build!
-#RUN cd /root/okular/build && \
-#    make
+RUN cd /root/okular/build && \
+    make
 
 ENTRYPOINT ["/bin/bash"]
