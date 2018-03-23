@@ -45,7 +45,7 @@ RUN apt-get install -y  pkg-config \
 
 
 # Get sources
-RUN git clone -b edit3 https://github.com/igsor/okular /root/okular
+RUN git clone https://github.com/igsor/okular /root/okular
 
 # CMake
 RUN mkdir /root/okular/build && \
